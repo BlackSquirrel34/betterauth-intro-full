@@ -1,3 +1,4 @@
+import { ReturnButton } from "@/components/return-button";
 import SignOutButton from "@/components/sign-out-button";
 import { auth } from "@/lib/auth";
 import { headers } from "next/headers";
@@ -14,7 +15,8 @@ export default async function Page() {
   return (
     <div className="px-8 py-16 container mx-auto max--w-screen-lg space-y-8">
       <div className="space-y-8">
-        <div className="h1 text-3xl font-bold">Profile</div>
+        <h1 className="text-3xl font-bold">Profile</h1>
+        <ReturnButton href="/" label="Home" />
       </div>
 
       <SignOutButton />
