@@ -16,6 +16,10 @@ export const GetStartedButton = () => {
   }
 
   const href = session ? "/profile" : "/auth/login";
+  // debugging
+  if (session) {
+    console.log("# User role: from get-started-button", session.user.role);
+  }
 
   return (
     <div className="flex flex-col items-center gap-4">
@@ -23,7 +27,15 @@ export const GetStartedButton = () => {
         <Link href={href}>Get Started</Link>
       </Button>
 
-      {session && <p>Welcome back, {session.user.name}! 👋</p>}
+      {session && (
+        <p className="flex items-center gap-2">
+          <span
+            data-role={session.user.role} // displaying blue/red dot does not work, although role can be accessed
+            className="size-4 rounded-full animate-pulse data-[role=USER]:bg-blue-600 data-[role=ADMIN]:bg-red-600"
+          />
+          Welcome back, {session.user.name} as {session.user.role} ! 👋
+        </p>
+      )}
     </div>
   );
 };

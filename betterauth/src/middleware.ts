@@ -1,10 +1,11 @@
 import { getSessionCookie } from "better-auth/cookies";
 import { NextRequest, NextResponse } from "next/server";
 
-const protectedRoutes = ["/profile"];
+const protectedRoutes = ["/profile", "/admin/dashboard"];
 
 // middleware jsut checkhs whether session cookie is there -- not if its genuine
 // the latter is done at page level
+// this is how better auth recommends it
 export async function middleware(req: NextRequest) {
   const { nextUrl } = req;
   const sessionCookie = getSessionCookie(req);

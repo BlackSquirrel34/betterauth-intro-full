@@ -48,7 +48,7 @@ function Button({
   const Comp = asChild ? Slot : "button";
 
   // testing
-  console.log("props", props);
+  //  console.log("props, button.tsx", props);
   return (
     <Comp
       data-slot="button"
