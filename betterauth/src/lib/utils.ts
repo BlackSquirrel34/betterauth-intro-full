@@ -7,7 +7,14 @@ export function cn(...inputs: ClassValue[]) {
 
 // valid email domains
 export function getValidDomains() {
-  const domains = ["gmail.com", "yahoo.com", "web.de", "world.com"];
+  const domains = [
+    "gmail.com",
+    "yahoo.com",
+    "web.de",
+    "world.com",
+    "blacksquirrel.dev",
+    "posteo.de",
+  ];
   // for testing
   if (process.env.NODE_ENV === "development") {
     domains.push("example.com");

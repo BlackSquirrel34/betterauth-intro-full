@@ -9,4 +9,13 @@ const authClient = createAuthClient({
   plugins: [inferAdditionalFields<typeof auth>(), adminClient({ ac, roles })], // this helps infer ROLE in session of GetStartedButton. authclient can now infer types of new fields
 });
 
-export const { signUp, signOut, signIn, useSession, admin } = authClient;
+export const {
+  signUp,
+  signOut,
+  signIn,
+  useSession,
+  admin,
+  sendVerificationEmail,
+  forgetPassword,
+  resetPassword,
+} = authClient;
