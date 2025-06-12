@@ -1,4 +1,4 @@
-import { betterAuth } from "better-auth";
+import { betterAuth, type BetterAuthOptions } from "better-auth";
 import { prismaAdapter } from "better-auth/adapters/prisma";
 import { prisma } from "@/lib/prisma";
 import { hashPassword, verifyPassword } from "@/lib/argon2";
@@ -6,11 +6,13 @@ import { nextCookies } from "better-auth/next-js";
 import { createAuthMiddleware, APIError } from "better-auth/api";
 import { getValidDomains, normalizeName } from "@/lib/utils";
 import { UserRole } from "@/generated/prisma";
-import { admin } from "better-auth/plugins";
+import { admin, customSession } from "better-auth/plugins";
 import { ac, roles } from "@/lib/permissions";
 import { sendEmailAction } from "@/actions/send-email.action";
 
-export const auth = betterAuth({
+// putting everythng inside the options is a workaround for accessing the type of user.role,
+// which is coming from admin plugin. and we want to pull that into the customSession
+const options = {
   database: prismaAdapter(prisma, {
     provider: "postgresql",
   }),
@@ -130,7 +132,34 @@ export const auth = betterAuth({
       adminRoles: UserRole.ADMIN,
       ac,
       roles,
-    }),
+    }), // we can define which information we want in the session
+  ],
+} satisfies BetterAuthOptions;
+
+export const auth = betterAuth({
+  ...options,
+  plugins: [
+    // we add the custom session to the plugins at the bottom
+    // in there we define which information we want accessible in the session
+    ...(options.plugins ?? []),
+    customSession(async ({ user, session }) => {
+      return {
+        session: {
+          expiresAt: session.expiresAt,
+          token: session.token,
+          userAgent: session.userAgent,
+        },
+        user: {
+          id: user.id,
+          name: user.name,
+          email: user.email,
+          image: user.image,
+          createdAt: user.createdAt,
+          role: user.role, // role is added by the admin plugin and the custom session is not able to get the type changes from there
+          funfact: "this is an additional field",
+        },
+      };
+    }, options), // passing it in as second argument > now we get type inference. see betterauth documentation for this workaround
   ],
 });
 

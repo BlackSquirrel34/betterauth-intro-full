@@ -1,12 +1,20 @@
 import { createAuthClient } from "better-auth/react";
-import { inferAdditionalFields, adminClient } from "better-auth/client/plugins";
+import {
+  inferAdditionalFields,
+  adminClient,
+  customSessionClient,
+} from "better-auth/client/plugins";
 // as we're using auth as a type we can say:
 import type { auth } from "@/lib/auth";
 import { ac, roles } from "@/lib/permissions";
 
 const authClient = createAuthClient({
   baseURL: process.env.NEXT_PUBLIC_API_URL,
-  plugins: [inferAdditionalFields<typeof auth>(), adminClient({ ac, roles })], // this helps infer ROLE in session of GetStartedButton. authclient can now infer types of new fields
+  plugins: [
+    inferAdditionalFields<typeof auth>(),
+    adminClient({ ac, roles }), // this helps infer ROLE in session of GetStartedButton. authclient can now infer types of new fields
+    customSessionClient<typeof auth>(),
+  ],
 });
 
 export const {
@@ -18,4 +26,5 @@ export const {
   sendVerificationEmail,
   forgetPassword,
   resetPassword,
+  updateUser,
 } = authClient;
