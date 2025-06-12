@@ -132,6 +132,12 @@ const options = {
   },
   session: {
     expiresIn: 30 * 24 * 60 * 60, // number in seconds. 30 days.
+    // this prevents going to the db every time, works similar to JWT
+    // see betterauth Optimize for Performance in docs
+    cookieCache: {
+      enabled: true,
+      maxAge: 5 * 60,
+    },
   },
   account: {
     accountLinking: {
