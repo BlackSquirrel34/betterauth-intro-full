@@ -6,7 +6,7 @@ import { nextCookies } from "better-auth/next-js";
 import { createAuthMiddleware, APIError } from "better-auth/api";
 import { getValidDomains, normalizeName } from "@/lib/utils";
 import { UserRole } from "@/generated/prisma";
-import { admin, customSession } from "better-auth/plugins";
+import { admin, customSession, magicLink } from "better-auth/plugins";
 import { ac, roles } from "@/lib/permissions";
 import { sendEmailAction } from "@/actions/send-email.action";
 
@@ -81,6 +81,30 @@ const options = {
           },
         };
       }
+      // when using magic link for sign in we also want to normalize the name
+      if (ctx.path === "/sign-in/magic-link") {
+        const name = normalizeName(ctx.body.name);
+
+        return {
+          context: {
+            ...ctx,
+            body: { ...ctx.body, name },
+          },
+        };
+      }
+
+      // also on update-user
+      // when using magic link for sign in we also want to normalize the name
+      if (ctx.path === "/update-user") {
+        const name = normalizeName(ctx.body.name);
+
+        return {
+          context: {
+            ...ctx,
+            body: { ...ctx.body, name },
+          },
+        };
+      }
     }),
   },
   databaseHooks: {
@@ -133,6 +157,18 @@ const options = {
       ac,
       roles,
     }), // we can define which information we want in the session
+    magicLink({
+      sendMagicLink: async ({ email, url }) => {
+        await sendEmailAction({
+          to: email,
+          subject: "Magic Link Login",
+          meta: {
+            description: "Please click the link below to log in.",
+            link: url,
+          },
+        });
+      },
+    }),
   ],
 } satisfies BetterAuthOptions;
 

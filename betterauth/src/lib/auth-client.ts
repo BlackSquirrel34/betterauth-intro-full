@@ -3,6 +3,7 @@ import {
   inferAdditionalFields,
   adminClient,
   customSessionClient,
+  magicLinkClient,
 } from "better-auth/client/plugins";
 // as we're using auth as a type we can say:
 import type { auth } from "@/lib/auth";
@@ -13,7 +14,8 @@ const authClient = createAuthClient({
   plugins: [
     inferAdditionalFields<typeof auth>(),
     adminClient({ ac, roles }), // this helps infer ROLE in session of GetStartedButton. authclient can now infer types of new fields
-    customSessionClient<typeof auth>(),
+    customSessionClient<typeof auth>(), // this helps with passing the funfact (custom session info) to the client side
+    magicLinkClient(),
   ],
 });
 
